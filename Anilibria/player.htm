@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+</head>
+<body style="background-color:#000;">
+<video id="feature" width="100%" controls preload="auto">
+    <source src="" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+<br/>
+<script>
+	var gUri = "";
+	
+	// if this page is hosted in .net webbrowser container, respond to fullscreen requests
+	if (window.external) {
+		setTimeout(function() {
+			document.addEventListener("MSFullscreenChange", function () {
+				var inFullScreenMode = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+				if (inFullScreenMode) {
+					window.external.enterFullscreen();
+				}
+				else {
+					window.external.exitFullscreen();
+				}
+			});
+		}, 100);
+	}
+	
+	function myPopup(url, windowname, w, h, x, y)
+	{
+		window.open(url, windowname, "resizable=yes, toolbar=no, scrollbars=yes, menubar=no, status=no, directories=no, width=" + w + ", height=" + h + ", left=" + x + ", top=" + y);
+	}
+	
+	function getHashValue(key) {
+		var matches = location.hash.match(new RegExp(key+'=([^&]*)'));
+		return matches ? matches[1] : null;
+	}
+
+	function playNewWindow(uri) {
+		myPopup(location.href + "#vid=" + uri, "player", 720, 420, 600, 100);
+		return;
+	}
+	
+	function playUri(uri) {
+		gUri = uri;
+		var el = document.getElementById('feature');
+		el.src = uri;
+		setTimeout(function() {
+			el.play();
+		}, 2000);
+	}
+
+  String.prototype.replaceAll = function(search, replacement) {
+      var target = this;
+      return target.replace(new RegExp(search, 'g'), replacement);
+  };
+  
+	// if this page 'launched in new window' this will run and play vid after user enables scripts
+	(function() {
+		var vid = getHashValue('vid');
+		if (vid) {
+      document.title = vid.replaceAll("%20", " ");
+			playUri(vid);
+		}
+
+	})();	
+</script>
+</body>
+</html>
